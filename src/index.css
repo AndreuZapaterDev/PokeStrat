@@ -1,65 +1,13 @@
-/* global resets and base fonts */
-:root {
-  --poke-red: #cc0000;
-  --poke-blue: #3b4cca;
-  --poke-yellow: #ffcb05;
-  --text-dark: #212121;
-  --bg-light: #f9f9f9;
-
-  font-family: 'Press Start 2P', cursive, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  color: var(--text-dark);
-  background: none; /* gradient applied on body */
-  height: 100%;
+/* Global reset + layout */
+* {
+  box-sizing: border-box;
 }
 
 html,
 body {
-  margin: 0;
   height: 100%;
-  position: relative;
-  overflow-x: hidden;
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  background: linear-gradient(45deg, var(--poke-yellow), var(--poke-blue), var(--poke-red));
-  background-size: 400% 400%;
-  animation: bgShift 20s ease infinite;
-}
-
-/* no background pattern */
-body::before {
-  content: none;
-}
-
-@keyframes bgShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-
-h1 {
-  font-size: 2.5rem;
-  margin: 0.5rem 0;
-  background: linear-gradient(90deg, var(--poke-red), var(--poke-blue));
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-body {
-  cursor: url('https://cur.cursors-4u.net/pokemons/pok-5/pok402.cur'), auto;
-}
-
-ul {
   margin: 0;
-  padding: 0;
-}
-
-li {
-  list-style: none;
 }
