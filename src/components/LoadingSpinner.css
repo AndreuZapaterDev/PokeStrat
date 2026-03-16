@@ -1,0 +1,70 @@
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.spinnerRing {
+  --size: 2.4rem;
+  --thickness: 0.28rem;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.5) 18%,
+    rgba(255, 255, 255, 0.2) 34%,
+    rgba(0, 0, 0, 0.15) 52%,
+    rgba(0, 0, 0, 0.35) 70%,
+    rgba(255, 255, 255, 0.25) 85%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+  mask: radial-gradient(circle at center, transparent calc(50% - var(--thickness)), black calc(50% - var(--thickness)));
+  -webkit-mask: radial-gradient(circle at center, transparent calc(50% - var(--thickness)), black calc(50% - var(--thickness)));
+  box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.08);
+  animation: spin 0.8s linear infinite;
+}
+
+.spinnerRing::before {
+  content: '';
+  position: absolute;
+  inset: var(--thickness);
+  border-radius: 50%;
+  background: rgba(10, 14, 26, 0.6);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinReverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.98);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.spinnerLabel {
+  font-size: 0.95rem;
+}

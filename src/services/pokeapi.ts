@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export type PokemonListItem = {
   name: string
   url: string
@@ -156,6 +158,35 @@ export async function fetchPokemonList(
     previous: data.previous,
     results: data.results || [],
   }
+}
+
+const pokemonSummaryCache = new Map<string | number, PokemonCard>()
+
+export async function fetchPokemonSummary(
+  idOrName: string | number,
+): Promise<PokemonCard> {
+  const cacheKey = String(idOrName)
+  const cached = pokemonSummaryCache.get(cacheKey)
+  if (cached) return cached
+
+  const response = await fetch(`${POKEAPI_BASE}/pokemon/${idOrName}`)
+  if (!response.ok) {
+    throw new Error(`Error en la API de PokéAPI (${response.status})`)
+  }
+  const data = await response.json()
+
+  const summary: PokemonCard = {
+    id: data.id,
+    name: data.name,
+    spriteUrl:
+      data.sprites?.other?.['official-artwork']?.front_default ||
+      data.sprites?.front_default ||
+      getPokemonSpriteUrl(data.id),
+    types: data.types?.map((t: any) => t.type?.name).filter(Boolean) ?? [],
+  }
+
+  pokemonSummaryCache.set(cacheKey, summary)
+  return summary
 }
 
 export async function fetchPokemonDetail(idOrName: string | number): Promise<PokemonDetail> {

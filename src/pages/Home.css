@@ -1,0 +1,39 @@
+.hero {
+  max-width: 680px;
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2.4rem, 4vw, 3.25rem);
+}
+
+.hero p {
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.notes {
+  max-width: 680px;
+  padding: 1.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.notes h2 {
+  margin-top: 0;
+}
+
+.notes ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.35rem;
+  color: var(--muted);
+}

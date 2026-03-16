@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchPokemonDetail, fetchPokemonList, toPokemonCard } from '../services/pokeapi'
+import LoadingSpinner from '../components/LoadingSpinner'
+import './Pokedex.css'
+import { fetchPokemonList, fetchPokemonSummary, toPokemonCard } from '../services/pokeapi'
 import type { PokemonCard } from '../services/pokeapi'
 
 const PAGE_SIZE = 50
@@ -35,35 +37,61 @@ export default function Pokedex() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
+    let isCancelled = false
 
-    fetchPokemonList(PAGE_SIZE, page * PAGE_SIZE)
-      .then(async (data) => {
+    async function loadPage() {
+      setLoading(true)
+      setError(null)
+
+      try {
+        const data = await fetchPokemonList(PAGE_SIZE, page * PAGE_SIZE)
+        if (isCancelled) return
+
         setTotal(data.count)
 
         const basicCards = data.results.map(toPokemonCard)
+        setCards(basicCards)
 
-        // Load types for each card (override as they arrive)
-        const detailedCards = await Promise.all(
-          basicCards.map(async (card) => {
-            try {
-              const detail = await fetchPokemonDetail(card.id)
-              return {
-                ...card,
-                name: detail.name,
-                types: detail.types,
+        // Fetch basic info in small batches so the UI can show cards quickly
+        const batchSize = 10
+        for (let i = 0; i < basicCards.length; i += batchSize) {
+          const batch = basicCards.slice(i, i + batchSize)
+
+          const updatedBatch = await Promise.all(
+            batch.map(async (card) => {
+              try {
+                const detail = await fetchPokemonSummary(card.id)
+                return {
+                  ...card,
+                  name: detail.name,
+                  types: detail.types,
+                }
+              } catch {
+                return card
               }
-            } catch {
-              return card
-            }
-          }),
-        )
+            }),
+          )
 
-        setCards(detailedCards)
-      })
-      .catch((err) => setError(err?.message ?? 'Error al cargar la Pokédex'))
-      .finally(() => setLoading(false))
+          if (isCancelled) return
+
+          setCards((prev) => {
+            const prevById = new Map(prev.map((c) => [c.id, c]))
+            updatedBatch.forEach((card) => prevById.set(card.id, card))
+            return Array.from(prevById.values())
+          })
+        }
+      } catch (err) {
+        if (!isCancelled) setError((err as Error)?.message ?? 'Error al cargar la Pokédex')
+      } finally {
+        if (!isCancelled) setLoading(false)
+      }
+    }
+
+    loadPage()
+
+    return () => {
+      isCancelled = true
+    }
   }, [page])
 
   const filtered = useMemo(() => {
@@ -97,7 +125,7 @@ export default function Pokedex() {
         />
       </section>
 
-      {loading && <p className="status">Cargando Pokémon…</p>}
+      {loading && <LoadingSpinner label="Cargando Pokémon…" />}
       {error && <p className="status error">{error}</p>}
 
       {!loading && !error && (

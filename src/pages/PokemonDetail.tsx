@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import LoadingSpinner from '../components/LoadingSpinner'
+import './PokemonDetail.css'
 import { fetchPokemonDetail } from '../services/pokeapi'
 import type { PokemonDetail } from '../services/pokeapi'
 
@@ -51,14 +53,29 @@ export default function PokemonDetailPage() {
   useEffect(() => {
     if (!id) return
 
-    setLoading(true)
-    setError(null)
-    setPokemon(null)
+    const pokemonId = id
+    let isCancelled = false
 
-    fetchPokemonDetail(id)
-      .then(setPokemon)
-      .catch((err) => setError(err?.message ?? 'No se pudo cargar el Pokémon'))
-      .finally(() => setLoading(false))
+    async function loadPokemon() {
+      setLoading(true)
+      setError(null)
+      setPokemon(null)
+
+      try {
+        const data = await fetchPokemonDetail(pokemonId)
+        if (!isCancelled) setPokemon(data)
+      } catch (err) {
+        if (!isCancelled) setError((err as Error)?.message ?? 'No se pudo cargar el Pokémon')
+      } finally {
+        if (!isCancelled) setLoading(false)
+      }
+    }
+
+    loadPokemon()
+
+    return () => {
+      isCancelled = true
+    }
   }, [id])
 
   return (
@@ -70,7 +87,7 @@ export default function PokemonDetailPage() {
         </Link>
       </header>
 
-      {loading && <p className="status">Cargando datos…</p>}
+      {loading && <LoadingSpinner label="Cargando datos…" />}
       {error && <p className="status error">{error}</p>}
 
       {!loading && !error && pokemon && (
@@ -86,15 +103,33 @@ export default function PokemonDetailPage() {
                   </span>
                 ))}
               </div>
+
+              <div className="detailQuick">
+                <div className="detailQuickItem">
+                  <span className="detailQuickLabel">Altura</span>
+                  <span className="detailQuickValue">{pokemon.height / 10} m</span>
+                </div>
+                <div className="detailQuickItem">
+                  <span className="detailQuickLabel">Peso</span>
+                  <span className="detailQuickValue">{pokemon.weight / 10} kg</span>
+                </div>
+                <div className="detailQuickItem">
+                  <span className="detailQuickLabel">Exp base</span>
+                  <span className="detailQuickValue">{pokemon.baseExperience}</span>
+                </div>
+              </div>
             </div>
-            <img
-              className="detailSprite"
-              src={pokemon.spriteUrl}
-              alt={pokemon.name}
-              width={260}
-              height={260}
-              loading="lazy"
-            />
+
+            <div className="detailImageWrapper">
+              <img
+                className="detailSprite"
+                src={pokemon.spriteUrl}
+                alt={pokemon.name}
+                width={260}
+                height={260}
+                loading="lazy"
+              />
+            </div>
           </header>
 
           <div className="wikiTabs">
@@ -239,16 +274,24 @@ export default function PokemonDetailPage() {
               {activeTab === 'stats' && (
                 <article className="wikiSection">
                   <h3>Estadísticas</h3>
-                  <table className="statsTable">
-                    <tbody>
-                      {pokemon.stats.map((stat) => (
-                        <tr key={stat.name}>
-                          <td>{statLabels[stat.name] ?? stat.name}</td>
-                          <td>{stat.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div className="statsGrid">
+                    {pokemon.stats.map((stat) => {
+                      const value = stat.value
+                      const max = 255
+                      const percent = Math.min(100, Math.round((value / max) * 100))
+                      return (
+                        <div key={stat.name} className="statRow">
+                          <div className="statHeader">
+                            <span className="statName">{statLabels[stat.name] ?? stat.name}</span>
+                            <span className="statValue">{value}</span>
+                          </div>
+                          <div className="statBar">
+                            <div className="statFill" style={{ width: `${percent}%` }} />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </article>
               )}
 
