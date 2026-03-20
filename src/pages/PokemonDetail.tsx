@@ -63,6 +63,8 @@ export default function PokemonDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'evolution' | 'locations'>('stats')
 
+  const evolutionChain = pokemon?.evolutionChain ?? []
+
   const tabs = [
     { key: 'stats', label: 'Estadísticas' },
     { key: 'moves', label: 'Movimientos' },
@@ -286,11 +288,11 @@ export default function PokemonDetailPage() {
                 </article>
               )}
 
-              {activeTab === 'evolution' && pokemon.evolutionChain && pokemon.evolutionChain.length > 0 && (
+              {activeTab === 'evolution' && evolutionChain.length > 0 && (
                 <article className="wikiSection">
                   <h3>Evolución</h3>
                   <div className="evolutionChain">
-                    {pokemon.evolutionChain.map((stage, index) => (
+                    {evolutionChain.map((stage, index) => (
                       <div key={stage.id} className="evolutionCard">
                         <Link to={`/pokemon/${stage.id}`} className="evolutionImageLink">
                           <img
@@ -312,7 +314,7 @@ export default function PokemonDetailPage() {
                             <span className="evolutionMeta">Origen</span>
                           )}
                         </div>
-                        {index < pokemon.evolutionChain.length - 1 && <span className="evolutionArrow">→</span>}
+                        {index < evolutionChain.length - 1 && <span className="evolutionArrow">→</span>}
                       </div>
                     ))}
                   </div>

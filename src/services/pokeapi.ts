@@ -64,7 +64,7 @@ export type PokemonDetail = {
   eggGroups?: string[]
   captureRate?: number
   baseHappiness?: number
-evolutionChain?: Array<{ id: number; name: string; level?: number; method?: string; trigger?: string }>
+  evolutionChain?: Array<{ id: number; name: string; level?: number; method?: string; trigger?: string }>
 }
 
 const POKEAPI_BASE = 'https://pokeapi.co/api/v2'
