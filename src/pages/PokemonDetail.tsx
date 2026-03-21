@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner'
 import './PokemonDetail.css'
@@ -56,6 +56,19 @@ const statLabels: Record<string, string> = {
   speed: 'Velocidad',
 }
 
+function localizeMoveMethod(method?: string): string | undefined {
+  if (!method) return undefined
+  const mapping: Record<string, string> = {
+    'level-up': 'Por nivel',
+    machine: 'MT/MO',
+    tutor: 'Tutor',
+    egg: 'Huevo',
+    trade: 'Intercambio',
+    unknown: 'Otros',
+  }
+  return mapping[method] ?? method.replace(/[-_]/g, ' ')
+}
+
 export default function PokemonDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [pokemon, setPokemon] = useState<PokemonDetail | null>(null)
@@ -64,6 +77,16 @@ export default function PokemonDetailPage() {
   const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'evolution' | 'locations'>('stats')
 
   const evolutionChain = pokemon?.evolutionChain ?? []
+
+  const evolutionTree = useMemo(() => {
+    if (evolutionChain.length === 0) return null
+
+    const root = evolutionChain.find((s) => !s.parentId) ?? evolutionChain[0]
+    const stage1 = evolutionChain.filter((s) => s.parentId === root.id)
+    const stage2 = stage1.length === 1 ? evolutionChain.filter((s) => s.parentId === stage1[0].id) : []
+
+    return { root, stage1, stage2 }
+  }, [evolutionChain])
 
   const tabs = [
     { key: 'stats', label: 'Estadísticas' },
@@ -180,19 +203,6 @@ export default function PokemonDetailPage() {
 
           <div className="wikiContent">
             <section className="wikiMain">
-              {pokemon.heldItems.length > 0 && (
-                <article className="wikiSection">
-                  <h3>Objetos</h3>
-                  <ul className="wikiList">
-                    {pokemon.heldItems.map((item) => (
-                      <li key={item.name}>
-                        <strong>{item.name}</strong>
-                        {item.effect ? <p className="smallText">{item.effect}</p> : null}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              )}
 
               {activeTab === 'stats' && (
                 <article className="wikiSection">
@@ -257,8 +267,8 @@ export default function PokemonDetailPage() {
                                       {move.level != null && move.level > 0 && (
                                         <span className="moveMetaItem">Lv: {move.level}</span>
                                       )}
-                                      {move.method && move.method !== 'unknown' && (
-                                        <span className="moveMetaItem">{move.method.replace('-', ' ')}</span>
+                                      {move.method && (
+                                        <span className="moveMetaItem">{localizeMoveMethod(move.method)}</span>
                                       )}
                                       {move.power != null && <span className="moveMetaItem">PWR: {move.power}</span>}
                                       {move.accuracy != null && <span className="moveMetaItem">ACC: {move.accuracy}</span>}
@@ -288,36 +298,126 @@ export default function PokemonDetailPage() {
                 </article>
               )}
 
-              {activeTab === 'evolution' && evolutionChain.length > 0 && (
-                <article className="wikiSection">
+              {activeTab === 'evolution' && (
+                <article className='wikiSection'>
                   <h3>Evolución</h3>
-                  <div className="evolutionChain">
-                    {evolutionChain.map((stage, index) => (
-                      <div key={stage.id} className="evolutionCard">
-                        <Link to={`/pokemon/${stage.id}`} className="evolutionImageLink">
-                          <img
-                            src={getPokemonSpriteUrl(stage.id)}
-                            alt={stage.name}
-                            width={100}
-                            height={100}
-                            className="evolutionImage"
-                            loading="lazy"
-                          />
-                        </Link>
-                        <div className="evolutionInfo">
-                          <strong>{stage.name}</strong>
-                          {stage.level != null ? (
-                            <span className="evolutionMeta">Evoluciona a Lv. {stage.level}</span>
-                          ) : stage.trigger ? (
-                            <span className="evolutionMeta">{stage.trigger}</span>
-                          ) : (
-                            <span className="evolutionMeta">Origen</span>
-                          )}
+                  {!evolutionTree ? (
+                    <p>Este Pokémon no tiene cadena de evolución conocida.</p>
+                  ) : (
+                    <div className='evolutionColumn'>
+                      {/* Root */}
+                      <div className='evolutionStageBlock'>
+                        <div className='evolutionCardColumn'>
+                          <Link to={`/pokemon/${evolutionTree.root.id}`} className='evolutionImageLink'>
+                            <img
+                              src={getPokemonSpriteUrl(evolutionTree.root.id)}
+                              alt={evolutionTree.root.name}
+                              width={100}
+                              height={100}
+                              className='evolutionImage'
+                              loading='lazy'
+                            />
+                          </Link>
+                          <div className='evolutionInfo'>
+                            <strong>{evolutionTree.root.name}</strong>
+                            <span className='evolutionMeta'>Origen</span>
+                          </div>
                         </div>
-                        {index < evolutionChain.length - 1 && <span className="evolutionArrow">→</span>}
                       </div>
-                    ))}
-                  </div>
+
+                      {/* Stage 1 or root to children */}
+                      {evolutionTree.stage1.length === 1 ? (
+                        <>
+                          <div className='evolutionArrowDown' role='presentation'>↓</div>
+                          <div className='evolutionStageBlock'>
+                            <div className='evolutionCardColumn'>
+                              <Link to={`/pokemon/${evolutionTree.stage1[0].id}`} className='evolutionImageLink'>
+                                <img
+                                  src={getPokemonSpriteUrl(evolutionTree.stage1[0].id)}
+                                  alt={evolutionTree.stage1[0].name}
+                                  width={100}
+                                  height={100}
+                                  className='evolutionImage'
+                                  loading='lazy'
+                                />
+                              </Link>
+                              <div className='evolutionInfo'>
+                                <strong>{evolutionTree.stage1[0].name}</strong>
+                                <span className='evolutionMeta'>{evolutionTree.stage1[0].trigger ?? (evolutionTree.stage1[0].level ? `Lv. ${evolutionTree.stage1[0].level}` : 'Evolución')}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {evolutionTree.stage2.length > 0 && (
+                            <>
+                              <div className='evolutionArrowDown' role='presentation'>↓</div>
+                              <div className='evolutionBranch'>
+                                {evolutionTree.stage2.map((stage) => (
+                                  <div key={stage.id} className='evolutionCardColumn'>
+                                    <Link to={`/pokemon/${stage.id}`} className='evolutionImageLink'>
+                                      <img
+                                        src={getPokemonSpriteUrl(stage.id)}
+                                        alt={stage.name}
+                                        width={100}
+                                        height={100}
+                                        className='evolutionImage'
+                                        loading='lazy'
+                                      />
+                                    </Link>
+                                    <div className='evolutionInfo'>
+                                      <strong>{stage.name}</strong>
+                                      <span className='evolutionMeta'>{stage.trigger ?? (stage.level ? `Lv. ${stage.level}` : 'Evolución')}</span>
+                                      {stage.itemSprite && (
+                                        <img
+                                          className='evolutionItemIcon'
+                                          src={stage.itemSprite}
+                                          alt={stage.itemName ?? 'Objeto de evolución'}
+                                          width={24}
+                                          height={24}
+                                          loading='lazy'
+                                        />
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <div className='evolutionBranch'>
+                          {evolutionTree.stage1.map((stage) => (
+                            <div key={stage.id} className='evolutionCardColumn'>
+                              <Link to={`/pokemon/${stage.id}`} className='evolutionImageLink'>
+                                <img
+                                  src={getPokemonSpriteUrl(stage.id)}
+                                  alt={stage.name}
+                                  width={100}
+                                  height={100}
+                                  className='evolutionImage'
+                                  loading='lazy'
+                                />
+                              </Link>
+                              <div className='evolutionInfo'>
+                                <strong>{stage.name}</strong>
+                                <span className='evolutionMeta'>{stage.trigger ?? (stage.level ? `Lv. ${stage.level}` : 'Evolución')}</span>
+                                {stage.itemSprite && (
+                                  <img
+                                    className='evolutionItemIcon'
+                                    src={stage.itemSprite}
+                                    alt={stage.itemName ?? 'Objeto de evolución'}
+                                    width={24}
+                                    height={24}
+                                    loading='lazy'
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </article>
               )}
 

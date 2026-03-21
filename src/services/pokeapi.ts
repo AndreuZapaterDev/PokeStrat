@@ -64,7 +64,7 @@ export type PokemonDetail = {
   eggGroups?: string[]
   captureRate?: number
   baseHappiness?: number
-  evolutionChain?: Array<{ id: number; name: string; level?: number; method?: string; trigger?: string }>
+  evolutionChain?: Array<{ id: number; name: string; parentId?: number; level?: number; method?: string; trigger?: string; itemName?: string; itemUrl?: string; itemSprite?: string }>
 }
 
 const POKEAPI_BASE = 'https://pokeapi.co/api/v2'
@@ -113,13 +113,80 @@ async function getLocalizedEffectFromUrl(url: string | undefined, language = 'es
   }
 }
 
+function localizeMoveMethod(method?: string): string | undefined {
+  if (!method) return undefined
+  const mapping: Record<string, string> = {
+    'level-up': 'Por nivel',
+    machine: 'MT/MO',
+    tutor: 'Tutor',
+    egg: 'Huevo',
+    trade: 'Intercambio',
+    unknown: 'Otros',
+  }
+  return mapping[method] ?? method.replace(/[-_]/g, ' ')
+}
+
+function localizeLocationMethod(method?: string): string | undefined {
+  if (!method) return undefined
+  const mapping: Record<string, string> = {
+    walk: 'Caminar',
+    surf: 'Surf',
+    fish: 'Pescar',
+    flash: 'Flash',
+    unknown: 'Otros',
+  }
+  return mapping[method] ?? method.replace(/[-_]/g, ' ')
+}
+
+function localizeVersionName(version?: string): string | undefined {
+  if (!version) return undefined
+  const mapping: Record<string, string> = {
+    red: 'Rojo',
+    blue: 'Azul',
+    yellow: 'Amarillo',
+    gold: 'Oro',
+    silver: 'Plata',
+    crystal: 'Cristal',
+    ruby: 'Rubí',
+    sapphire: 'Zafiro',
+    emerald: 'Esmeralda',
+    'firered': 'Rojo Fuego',
+    'leafgreen': 'Verde Hoja',
+    'diamond': 'Diamante',
+    'pearl': 'Perla',
+    'platinum': 'Platino',
+    'heartgold': 'Oro HeartGold',
+    'soulsilver': 'Plata SoulSilver',
+    'black': 'Negro',
+    'white': 'Blanco',
+    'black-2': 'Negro 2',
+    'white-2': 'Blanco 2',
+    'x': 'X',
+    'y': 'Y',
+    'omega-ruby': 'Omega Rubí',
+    'alpha-sapphire': 'Alfa Zafiro',
+    'sun': 'Sol',
+    'moon': 'Luna',
+    'ultra-sun': 'Ultrasol',
+    'ultra-moon': 'Ultraluna',
+    'sword': 'Espada',
+    'shield': 'Escudo',
+    'brilliant-diamond': 'Diamante Brillante',
+    'shining-pearl': 'Perla Reluciente',
+    'legends-arceus': 'Leyendas: Arceus',
+    'scarlet': 'Escarlata',
+    'violet': 'Púrpura',
+  }
+  return mapping[version] ?? version.replace(/[-_]/g, ' ')
+}
+
 async function parseEvolutionChain(
   chain: any,
   language = 'es',
-): Promise<Array<{ id: number; name: string; level?: number; method?: string; trigger?: string }>> {
-  const result: Array<{ id: number; name: string; level?: number; method?: string; trigger?: string }> = []
+): Promise<Array<{ id: number; name: string; parentId?: number; level?: number; method?: string; trigger?: string; itemName?: string; itemUrl?: string; itemSprite?: string }>> {
+  const result: Array<{ id: number; name: string; parentId?: number; level?: number; method?: string; trigger?: string; itemName?: string; itemUrl?: string; itemSprite?: string }> = []
 
-  function formatTrigger(detail: any): string | undefined {
+  async function formatTrigger(detail: any): Promise<string | undefined> {
     if (!detail) return undefined
     const trigger = detail.trigger?.name
     const item = detail.item?.name
@@ -132,37 +199,58 @@ async function parseEvolutionChain(
       return 'Intercambio'
     }
     if (trigger === 'use-item' && item) {
-      return `Usar ${item}`
+      // Localiza nombre del objeto si está disponible (idioma español)
+      const localizedItem = detail.item?.url ? await getLocalizedNameFromUrl(detail.item.url, language) : undefined
+      return `Usar ${localizedItem ?? item}`
     }
     if (trigger) {
-      return trigger.replace('-', ' ')
+      return localizeMoveMethod(trigger)
     }
     if (item) {
       return `Usar ${item}`
     }
-    return known ? trigger : undefined
+    return known ? trigger.replace(/[-_]/g, ' ') : undefined
   }
 
-  async function traverse(node: any, prevDetail?: any) {
+  async function traverse(node: any, prevDetail?: any, parentId?: number) {
     if (!node || !node.species) return
     const id = getPokemonIdFromUrl(node.species.url)
     if (id) {
       const localizedName = (await getLocalizedNameFromUrl(node.species.url, language)) ?? node.species.name
       const level = prevDetail?.min_level ? Number(prevDetail.min_level) : undefined
       const trigger = prevDetail?.trigger?.name
+      const itemName = prevDetail?.item?.name
+      const itemUrl = prevDetail?.item?.url
+      let itemSprite: string | undefined
+      if (itemUrl) {
+        try {
+          const itemResp = await fetch(itemUrl)
+          if (itemResp.ok) {
+            const itemData = await itemResp.json()
+            itemSprite = itemData?.sprites?.default
+          }
+        } catch {
+          itemSprite = undefined
+        }
+      }
+
       result.push({
         id,
+        parentId,
         name: localizedName,
         level,
-        method: trigger ? trigger.replace('-', ' ') : undefined,
-        trigger: formatTrigger(prevDetail),
+        method: trigger ? localizeMoveMethod(trigger) : undefined,
+        trigger: await formatTrigger(prevDetail),
+        itemName,
+        itemUrl,
+        itemSprite,
       })
     }
 
     const evolvesTo = Array.isArray(node.evolves_to) ? node.evolves_to : []
     for (const next of evolvesTo) {
       const detail = Array.isArray(next.evolution_details) ? next.evolution_details[0] : undefined
-      await traverse(next, detail)
+      await traverse(next, detail, id)
     }
   }
 
@@ -346,8 +434,8 @@ export async function fetchPokemonDetail(idOrName: string | number): Promise<Pok
             for (const encounter of versionDetail.encounter_details ?? []) {
               locationEncounters.push({
                 area: areaName,
-                version: versionName,
-                method: encounter.method?.name,
+                version: localizeVersionName(versionName) ?? (versionName ?? 'Desconocida'),
+                method: localizeLocationMethod(encounter.method?.name),
                 minLevel: encounter.min_level,
                 maxLevel: encounter.max_level,
               })
