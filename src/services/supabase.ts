@@ -6,8 +6,20 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? ''
 
 export const supabaseEnabled = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 
+type AppDatabase = {
+  public: {
+    Tables: {
+      pokemons: {
+        Row: PokemonRow
+        Insert: PokemonRow
+        Update: Partial<PokemonRow>
+      }
+    }
+  }
+}
+
 export const supabase = supabaseEnabled
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  ? (createClient<AppDatabase>(SUPABASE_URL, SUPABASE_ANON_KEY) as unknown as any)
   : null
 
 // Auth helpers
@@ -148,7 +160,7 @@ export async function fetchPokemonListFromSupabase(
     throw new Error('Supabase no está configurado')
   }
 
-  let query = (supabase as unknown as any)
+  let query = supabase
     .from('pokemons')
     .select('*', { count: 'exact' })
     .order('id', { ascending: true })
@@ -180,13 +192,13 @@ export async function fetchPokemonDetailFromSupabase(
   const byId = typeof idOrName === 'number' || /^[0-9]+$/.test(String(idOrName))
   const matchValue = byId ? Number(idOrName) : String(idOrName).toLowerCase()
 
-  const query = (supabase as unknown as any)
+  const query = supabase
     .from('pokemons')
     .select('*')
     .limit(1)
 
   const { data, error } = byId
-    ? await query.eq('id', matchValue)
+    ? await query.eq('id', Number(matchValue))
     : await query.ilike('name', String(matchValue))
 
   if (error) {
