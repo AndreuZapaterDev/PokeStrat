@@ -510,8 +510,19 @@ export async function fetchPokemonDetail(idOrName: string | number): Promise<Pok
     }),
   )
 
-  const forms: Array<{ name: string; url: string }> =
+  const formsFromPokemon: Array<{ name: string; url: string }> =
     (data.forms ?? []).map((f: any) => ({ name: f.name, url: f.url }))
+
+  const formsFromSpecies: Array<{ name: string; url: string }> =
+    (speciesData?.varieties ?? [])
+      .map((v: any) => ({ name: v.pokemon?.name, url: v.pokemon?.url }))
+      .filter((f: any) => typeof f.name === 'string' && typeof f.url === 'string')
+
+  // Unificamos forms para incluir mega formas de species y las del endpoint pokemon.
+  const forms: Array<{ name: string; url: string }> = [
+    ...formsFromPokemon,
+    ...formsFromSpecies,
+  ].filter((form, index, self) => self.findIndex((f) => f.name === form.name) === index)
 
   const gameIndices: Array<{ game: string; index: number }> =
     (data.game_indices ?? []).map((g: any) => ({

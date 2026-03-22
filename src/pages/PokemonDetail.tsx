@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner'
 import './PokemonDetail.css'
-import { fetchPokemonDetail, getPokemonSpriteUrl } from '../services/pokeapi'
+import { fetchPokemonDetail, getPokemonSpriteUrl, getPokemonIdFromUrl } from '../services/pokeapi'
 import type { PokemonDetail } from '../services/pokeapi'
 
 const typeLabels: Record<string, string> = {
@@ -56,6 +56,9 @@ const statLabels: Record<string, string> = {
   speed: 'Velocidad',
 }
 
+const MAX_STAT = 255
+const MAX_TOTAL_STATS = 780
+
 function localizeMoveMethod(method?: string): string | undefined {
   if (!method) return undefined
   const mapping: Record<string, string> = {
@@ -69,6 +72,27 @@ function localizeMoveMethod(method?: string): string | undefined {
   return mapping[method] ?? method.replace(/[-_]/g, ' ')
 }
 
+function formatLocationArea(area?: string): string {
+  if (!area) return 'Desconocido'
+  return area.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function formatLocationVersion(version?: string): string {
+  if (!version) return 'Desconocida'
+  return version.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function formatLocationMethod(method?: string): string {
+  if (!method) return 'Desconocido'
+  const mapping: Record<string, string> = {
+    walk: 'Caminar',
+    surf: 'Surf',
+    fish: 'Pescar',
+    unspecified: 'No especificado',
+  }
+  return mapping[method.toLowerCase()] ?? method.replace(/[-_]/g, ' ')
+}
+
 export default function PokemonDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [pokemon, setPokemon] = useState<PokemonDetail | null>(null)
@@ -77,6 +101,11 @@ export default function PokemonDetailPage() {
   const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'evolution' | 'locations'>('stats')
 
   const evolutionChain = pokemon?.evolutionChain ?? []
+
+  const megaForms = useMemo(() => {
+    if (!pokemon?.forms) return []
+    return pokemon.forms.filter((form) => form.name?.toLowerCase().includes('mega'))
+  }, [pokemon?.forms])
 
   const evolutionTree = useMemo(() => {
     if (evolutionChain.length === 0) return null
@@ -207,19 +236,40 @@ export default function PokemonDetailPage() {
               {activeTab === 'stats' && (
                 <article className="wikiSection">
                   <h3>Estadísticas</h3>
+                  <div className="statSummary">
+                    <div>
+                      <strong>Total base</strong>: {pokemon.stats.reduce((sum, stat) => sum + stat.value, 0)} / {MAX_TOTAL_STATS}
+                    </div>
+                    <div>
+                      <strong>Promedio</strong>: {Math.round(pokemon.stats.reduce((sum, stat) => sum + stat.value, 0) / pokemon.stats.length)}
+                    </div>
+                  </div>
                   <div className="statsGrid">
                     {pokemon.stats.map((stat) => {
                       const value = stat.value
-                      const max = 255
-                      const percent = Math.min(100, Math.round((value / max) * 100))
+                      const percent = Math.min(100, Math.round((value / MAX_STAT) * 100))
+                      let barColor = '#E74C3C'
+                      if (value >= 49) barColor = '#F1C40F'
+                      if (value > 99) barColor = '#2ECC71'
+
                       return (
                         <div key={stat.name} className="statRow">
                           <div className="statHeader">
                             <span className="statName">{statLabels[stat.name] ?? stat.name}</span>
-                            <span className="statValue">{value}</span>
+                            <span className="statValue">{value} ({percent}%)</span>
                           </div>
-                          <div className="statBar">
-                            <div className="statFill" style={{ width: `${percent}%` }} />
+                          <div className="statBar" style={{ backgroundColor: '#ddd' }}>
+                            <div
+                              className="statFill"
+                              style={{
+                                width: `${percent}%`,
+                                background: barColor,
+                                boxShadow: `0 0 6px ${barColor}`,
+                              }}
+                            />
+                          </div>
+                          <div className="statDesc">
+                            {value <= 49 ? 'Débil' : value <= 99 ? 'Medio' : 'Fuerte'}
                           </div>
                         </div>
                       )
@@ -416,6 +466,35 @@ export default function PokemonDetailPage() {
                           ))}
                         </div>
                       )}
+
+                      {megaForms.length > 0 && (
+                        <div className='evolutionMegaSection'>
+                          <h4>Mega Evoluciones</h4>
+                          <div className='evolutionBranch'>
+                            {megaForms.map((form) => {
+                              const formId = getPokemonIdFromUrl(form.url)
+                              return (
+                                <div key={form.name} className='evolutionCardColumn'>
+                                  <Link to={`/pokemon/${form.name}`} className='evolutionImageLink'>
+                                    <img
+                                      src={getPokemonSpriteUrl(formId || 0)}
+                                      alt={form.name}
+                                      width={100}
+                                      height={100}
+                                      className='evolutionImage'
+                                      loading='lazy'
+                                    />
+                                  </Link>
+                                  <div className='evolutionInfo'>
+                                    <strong>{form.name.replace(/-/g, ' ')}</strong>
+                                    <span className='evolutionMeta'>Mega</span>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </article>
@@ -424,16 +503,23 @@ export default function PokemonDetailPage() {
               {activeTab === 'locations' && pokemon.locationEncounters && pokemon.locationEncounters.length > 0 && (
                 <article className="wikiSection">
                   <h3>Dónde aparece</h3>
-                  <ul className="wikiList">
-                    {pokemon.locationEncounters.slice(0, 10).map((loc, index) => (
-                      <li key={`${loc.area}-${loc.version}-${index}`}>
-                        <strong>{loc.area}</strong> ({loc.version})
-                        {loc.method ? ` — ${loc.method}` : ''}
-                        {loc.minLevel != null &&
-                          ` — Lv. ${loc.minLevel}${loc.maxLevel ? `-${loc.maxLevel}` : ''}`}
-                      </li>
+                  <p className="smallText">Se han encontrado {pokemon.locationEncounters.length} ubicaciones.</p>
+                  <div className="locationGrid">
+                    {pokemon.locationEncounters.map((loc, index) => (
+                      <div key={`${loc.area}-${loc.version}-${index}`} className="locationCard">
+                        <div className="locationHeader">
+                          <strong>{formatLocationArea(loc.area)}</strong>
+                          <span className="locationVersion">{formatLocationVersion(loc.version)}</span>
+                        </div>
+                        <p className="locationMeta">
+                          Método: {formatLocationMethod(loc.method)}
+                        </p>
+                        <p className="locationMeta">
+                          Nivel: {loc.minLevel != null ? loc.minLevel : '?'}{loc.maxLevel ? ` - ${loc.maxLevel}` : ''}
+                        </p>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </article>
               )}
             </section>
