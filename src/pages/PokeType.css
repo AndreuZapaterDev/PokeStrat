@@ -161,41 +161,127 @@
 }
 
 .typeCard {
-  background: linear-gradient(145deg, rgba(12, 17, 40, 0.92), rgba(20, 28, 59, 0.94));
-  border: 1px solid rgba(164, 207, 255, 0.2);
-  border-radius: 16px;
-  box-shadow: 0 14px 30px rgba(3, 8, 23, 0.45);
+  min-height: 340px;
+  background: linear-gradient(145deg, rgba(10, 18, 38, 0.9), rgba(22, 33, 55, 0.95));
+  border: 1px solid rgba(111, 179, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), inset 0 0 2px rgba(255, 255, 255, 0.08);
   overflow: hidden;
-  backdrop-filter: blur(6px);
-  transition: transform 200ms ease, box-shadow 200ms ease;
+  backdrop-filter: blur(8px);
+  transition: transform 180ms cubic-bezier(0.19, 1, 0.22, 1), box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .typeCard:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 40px rgba(3, 8, 23, 0.55);
+  transform: translateY(-7px) scale(1.02);
+  box-shadow: 0 28px 56px rgba(8, 16, 38, 0.45), inset 0 0 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(166, 215, 255, 0.8);
 }
+
+.singleTypeCard {
+  grid-column: 1 / -1;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0.3rem;
+}
+
+.singleTypeCard .typeCardHeader {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 -0.5px 0 rgba(255, 255, 255, 0.15);
+}
+
+.singleTypeCard .typeCardBody {
+  background: rgba(11, 21, 47, 0.78);
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.singleTypeCard .typeSectionTitle {
+  color: #b2d9ff;
+  font-size: 0.83rem;
+  letter-spacing: 0.1em;
+}
+
+.singleTypeCard .typeItem {
+  border-radius: 12px;
+  padding: 0.58rem 0.8rem;
+  background: rgba(17, 31, 63, 0.78);
+}
+
 .combinedCard {
   grid-column: 1 / -1;
   border-radius: 20px;
-  box-shadow: 0 18px 32px rgba(3, 8, 23, 0.62);
+  box-shadow: 0 22px 46px rgba(2, 6, 18, 0.72);
+  max-width: 830px;
+  margin: 0 auto;
+  border: 1px solid rgba(145, 195, 255, 0.45);
+}
+
+.combinedCard .typeCardHeader {
+  background: rgba(16, 28, 64, 0.94);
+  border-bottom: 1px solid rgba(145, 195, 255, 0.4);
+}
+
+.combinedCard .typeCardBody {
+  background: rgba(12, 20, 48, 0.8);
+  padding: 1rem 1.1rem 1.2rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.combinedCard .typeCardBody.twoCols {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.combinedCard .typeSection {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.combinedCard .typeSectionTitle {
+  color: #8dc6ff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid rgba(155, 205, 255, 0.28);
 }
 
 .combinedCard .typeItem {
-  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  border-radius: 11px;
+  padding: 0.62rem 0.8rem;
+  background: rgba(21, 39, 82, 0.68);
+  border: 1px solid rgba(125, 175, 235, 0.25);
 }
+
+.combinedCard .typeItem:hover {
+  background: rgba(26, 44, 98, 0.82);
+}
+
 .typeCardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.85rem 0.95rem;
+  padding: 1rem 1.1rem;
   color: #fff;
+  background: linear-gradient(135deg, rgba(55, 110, 200, 0.65), rgba(27, 30, 48, 0.95));
+  border-bottom: 1px solid rgba(146, 205, 255, 0.45);
+  backdrop-filter: blur(2px);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .typeName {
-  font-size: 1.02rem;
+  font-size: 1.12rem;
   font-weight: 800;
   text-transform: capitalize;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 14px rgba(76, 170, 255, 0.28);
 }
 
 .typeKey {
@@ -206,6 +292,9 @@
   border-radius: 999px;
   padding: 0.2rem 0.55rem;
   color: #f1f7ff;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  font-weight: 700;
 }
 
 .typeCardBody {
@@ -216,26 +305,111 @@
   gap: 0.55rem;
 }
 
-.typeItem {
+.typeCardBody.twoCols {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.typeSection {
   display: grid;
-  gap: 0.2rem;
-  border-radius: 10px;
-  padding: 0.45rem 0.6rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 0.5rem;
+}
+
+.typeSectionTitle {
+  color: #aaccff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  padding-bottom: 0.2rem;
+}
+
+.typeCard.noSelection {
+  grid-column: 1 / -1;
+  border: 1px dashed rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.06);
+}
+
+.typeCard.noSelection .typeCardBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  min-height: 80px;
+}
+
+.typeCard.noSelection .typeCardBody p {
+  margin: 0;
+  color: #c8d9ff;
+  font-size: 0.9rem;
+}
+
+.typeItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-radius: 14px;
+  padding: 0.75rem 0.95rem;
+  background: rgba(19, 36, 76, 0.90);
+  border: 1px solid rgba(118, 176, 255, 0.26);
+}
+
+.typeItem:hover {
+  border-color: rgba(178, 218, 255, 0.58);
+  background: rgba(24, 45, 96, 0.96);
+  transform: translateY(-1px);
 }
 
 .typeItem strong {
-  color: #aac4ed;
-  font-size: 0.72rem;
-  letter-spacing: 0.03em;
+  color: #d5e8ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  font-weight: 700;
 }
 
 .typeItem span {
-  color: #eeeff7;
+  display: flex;
+  align-items: center;
+  color: #f1f7ff;
   font-size: 0.82rem;
   line-height: 1.35;
+}
+
+.typeItem .multiplierBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.14rem 0.34rem;
+  border-radius: 8px;
+  margin-right: 0.45rem;
+  background: rgba(156, 184, 255, 0.22);
+  color: #dff5ff;
+}
+
+.typeItem .multiplier-x2 {
+  background: rgba(112, 223, 106, 0.22);
+  color: #a4ffe7;
+}
+
+.typeItem .multiplier-x1 {
+  background: rgba(184, 210, 255, 0.25);
+  color: #deebff;
+}
+
+.typeItem .multiplier-x05 {
+  background: rgba(255, 209, 98, 0.23);
+  color: #ffefb7;
+}
+
+.typeItem .multiplier-x0 {
+  background: rgba(255, 125, 136, 0.27);
+  color: #ffe0e9;
 }
 
 .typeItem span:empty {

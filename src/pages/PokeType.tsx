@@ -47,124 +47,36 @@ const typeColors: Record<string, string> = {
 const typeEffectiveness: Record<
   string,
   {
-    strong: string[]
-    weak: string[]
-    resistant: string[]
-    immune: string[]
+    ataqueX2: string[]
+    ataqueX0_5: string[]
+    ataqueX0: string[]
+    defensaX2: string[]
+    defensaX0_5: string[]
+    defensaX0: string[]
   }
 > = {
-  normal: {
-    strong: [],
-    weak: ['rock', 'steel'],
-    resistant: ['ghost'],
-    immune: ['ghost'],
-  },
-  fire: {
-    strong: ['grass', 'ice', 'bug', 'steel'],
-    weak: ['water', 'ground', 'rock'],
-    resistant: ['fire', 'grass', 'ice', 'bug', 'steel', 'fairy'],
-    immune: [],
-  },
-  water: {
-    strong: ['fire', 'ground', 'rock'],
-    weak: ['electric', 'grass'],
-    resistant: ['fire', 'water', 'ice', 'steel'],
-    immune: [],
-  },
-  electric: {
-    strong: ['water', 'flying'],
-    weak: ['ground'],
-    resistant: ['electric', 'flying', 'steel'],
-    immune: [],
-  },
-  grass: {
-    strong: ['water', 'ground', 'rock'],
-    weak: ['fire', 'ice', 'poison', 'flying', 'bug'],
-    resistant: ['water', 'electric', 'grass', 'ground'],
-    immune: [],
-  },
-  ice: {
-    strong: ['grass', 'ground', 'flying', 'dragon'],
-    weak: ['fire', 'fighting', 'rock', 'steel'],
-    resistant: ['ice'],
-    immune: [],
-  },
-  fighting: {
-    strong: ['normal', 'ice', 'rock', 'dark', 'steel'],
-    weak: ['flying', 'psychic', 'fairy'],
-    resistant: ['bug', 'rock', 'dark'],
-    immune: ['ghost'],
-  },
-  poison: {
-    strong: ['grass', 'fairy'],
-    weak: ['ground', 'psychic'],
-    resistant: ['grass', 'fighting', 'poison', 'bug', 'fairy'],
-    immune: [],
-  },
-  ground: {
-    strong: ['fire', 'electric', 'poison', 'rock', 'steel'],
-    weak: ['water', 'grass', 'ice'],
-    resistant: ['poison', 'rock'],
-    immune: ['electric'],
-  },
-  flying: {
-    strong: ['grass', 'fighting', 'bug'],
-    weak: ['electric', 'ice', 'rock'],
-    resistant: ['grass', 'fighting', 'bug'],
-    immune: ['ground'],
-  },
-  psychic: {
-    strong: ['fighting', 'poison'],
-    weak: ['bug', 'ghost', 'dark'],
-    resistant: ['fighting', 'psychic'],
-    immune: [],
-  },
-  bug: {
-    strong: ['grass', 'psychic', 'dark'],
-    weak: ['fire', 'flying', 'rock'],
-    resistant: ['grass', 'fighting', 'ground'],
-    immune: [],
-  },
-  rock: {
-    strong: ['fire', 'ice', 'flying', 'bug'],
-    weak: ['water', 'grass', 'fighting', 'ground', 'steel'],
-    resistant: ['normal', 'fire', 'poison', 'flying'],
-    immune: [],
-  },
-  ghost: {
-    strong: ['psychic', 'ghost'],
-    weak: ['ghost', 'dark'],
-    resistant: ['poison', 'bug'],
-    immune: ['normal', 'fighting'],
-  },
-  dragon: {
-    strong: ['dragon'],
-    weak: ['ice', 'dragon', 'fairy'],
-    resistant: ['fire', 'water', 'electric', 'grass'],
-    immune: [],
-  },
-  dark: {
-    strong: ['psychic', 'ghost'],
-    weak: ['fighting', 'bug', 'fairy'],
-    resistant: ['ghost', 'dark'],
-    immune: ['psychic'],
-  },
-  steel: {
-    strong: ['ice', 'rock', 'fairy'],
-    weak: ['fire', 'fighting', 'ground'],
-    resistant: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'dragon', 'steel', 'fairy'],
-    immune: ['poison'],
-  },
-  fairy: {
-    strong: ['fighting', 'dragon', 'dark'],
-    weak: ['poison', 'steel'],
-    resistant: ['fighting', 'bug', 'dark'],
-    immune: ['dragon'],
-  },
+  normal:{ataqueX2:[],ataqueX0_5:['rock','steel'],ataqueX0:['ghost'],defensaX2:['fighting'],defensaX0_5:[],defensaX0:['ghost']},
+  fire:{ataqueX2:['grass','ice','bug','steel'],ataqueX0_5:['fire','water','rock','dragon'],ataqueX0:[],defensaX2:['water','ground','rock'],defensaX0_5:['fire','grass','ice','bug','steel','fairy'],defensaX0:[]},
+  water:{ataqueX2:['fire','ground','rock'],ataqueX0_5:['water','grass','dragon'],ataqueX0:[],defensaX2:['electric','grass'],defensaX0_5:['fire','water','ice','steel'],defensaX0:[]},
+  electric:{ataqueX2:['water','flying'],ataqueX0_5:['electric','grass','dragon'],ataqueX0:['ground'],defensaX2:['ground'],defensaX0_5:['electric','flying','steel'],defensaX0:[]},
+  grass:{ataqueX2:['water','ground','rock'],ataqueX0_5:['fire','grass','poison','flying','bug','dragon','steel'],ataqueX0:[],defensaX2:['fire','ice','poison','flying','bug'],defensaX0_5:['water','electric','grass','ground'],defensaX0:[]},
+  ice:{ataqueX2:['grass','ground','flying','dragon'],ataqueX0_5:['fire','water','ice','steel'],ataqueX0:[],defensaX2:['fire','fighting','rock','steel'],defensaX0_5:['ice'],defensaX0:[]},
+  fighting:{ataqueX2:['normal','ice','rock','dark','steel'],ataqueX0_5:['poison','flying','psychic','bug','fairy'],ataqueX0:['ghost'],defensaX2:['flying','psychic','fairy'],defensaX0_5:['bug','rock','dark'],defensaX0:[]},
+  poison:{ataqueX2:['grass','fairy'],ataqueX0_5:['poison','ground','rock','ghost'],ataqueX0:['steel'],defensaX2:['ground','psychic'],defensaX0_5:['grass','fighting','poison','bug','fairy'],defensaX0:[]},
+  ground:{ataqueX2:['fire','electric','poison','rock','steel'],ataqueX0_5:['grass','bug'],ataqueX0:['flying'],defensaX2:['water','grass','ice'],defensaX0_5:['poison','rock'],defensaX0:['electric']},
+  flying:{ataqueX2:['grass','fighting','bug'],ataqueX0_5:['electric','rock','steel'],ataqueX0:[],defensaX2:['electric','ice','rock'],defensaX0_5:['grass','fighting','bug'],defensaX0:['ground']},
+  psychic:{ataqueX2:['fighting','poison'],ataqueX0_5:['psychic','steel'],ataqueX0:['dark'],defensaX2:['bug','ghost','dark'],defensaX0_5:['fighting','psychic'],defensaX0:[]},
+  bug:{ataqueX2:['grass','psychic','dark'],ataqueX0_5:['fire','fighting','poison','flying','ghost','steel','fairy'],ataqueX0:[],defensaX2:['fire','flying','rock'],defensaX0_5:['grass','fighting','ground'],defensaX0:[]},
+  rock:{ataqueX2:['fire','ice','flying','bug'],ataqueX0_5:['fighting','ground','steel'],ataqueX0:[],defensaX2:['water','grass','fighting','ground','steel'],defensaX0_5:['normal','fire','poison','flying'],defensaX0:[]},
+  ghost:{ataqueX2:['psychic','ghost'],ataqueX0_5:['dark'],ataqueX0:['normal'],defensaX2:['ghost','dark'],defensaX0_5:['poison','bug'],defensaX0:['normal','fighting']},
+  dragon:{ataqueX2:['dragon'],ataqueX0_5:['steel'],ataqueX0:['fairy'],defensaX2:['ice','dragon','fairy'],defensaX0_5:['fire','water','electric','grass'],defensaX0:[]},
+  dark:{ataqueX2:['psychic','ghost'],ataqueX0_5:['fighting','dark','fairy'],ataqueX0:[],defensaX2:['fighting','bug','fairy'],defensaX0_5:['ghost','dark'],defensaX0:['psychic']},
+  steel:{ataqueX2:['ice','rock','fairy'],ataqueX0_5:['fire','water','electric','steel'],ataqueX0:[],defensaX2:['fire','fighting','ground'],defensaX0_5:['normal','grass','ice','flying','psychic','bug','rock','dragon','steel','fairy'],defensaX0:['poison']},
+  fairy:{ataqueX2:['fighting','dragon','dark'],ataqueX0_5:['fire','poison','steel'],ataqueX0:[],defensaX2:['poison','steel'],defensaX0_5:['fighting','bug','dark'],defensaX0:['dragon']}
 }
 
+
 export default function PokeType() {
-  const types = Object.entries(typeLabels)
 
   const formatTypeList = (items: string[]) => {
     if (!items || items.length === 0) return '—'
@@ -173,23 +85,18 @@ export default function PokeType() {
 
   const [selectedComboTypes, setSelectedComboTypes] = useState<string[]>([])
 
-  const filteredTypes = types
-
   const getMultiplier = (attackType: string, defenderTypes: string[]) => {
     const attacker = typeEffectiveness[attackType]
     if (!attacker) return 1
 
     let multiplier = 1
+
     for (const defType of defenderTypes) {
-      if (attacker.immune.includes(defType)) {
-        return 0
-      }
-      if (attacker.strong.includes(defType)) {
-        multiplier *= 2
-      } else if (attacker.weak.includes(defType) || attacker.resistant.includes(defType)) {
-        multiplier *= 0.5
-      }
+      if (attacker.ataqueX0.includes(defType)) return 0
+      if (attacker.ataqueX2.includes(defType)) multiplier *= 2
+      else if (attacker.ataqueX0_5.includes(defType)) multiplier *= 0.5
     }
+
     return multiplier
   }
 
@@ -204,32 +111,28 @@ export default function PokeType() {
 
   const getAttackEffectiveness = (type: string): MultiplierMap => {
     const data = typeEffectiveness[type]
-    const x0 = [...data.immune]
-    const x2 = [...data.strong]
-    const x05 = [...data.weak]
-    const x1 = typesKeys.filter((t) => !x0.includes(t) && !x2.includes(t) && !x05.includes(t))
+
+    const x0 = [...data.ataqueX0]
+    const x2 = [...data.ataqueX2]
+    const x05 = [...data.ataqueX0_5]
+
+    const x1 = typesKeys.filter(
+      (t) => !x0.includes(t) && !x2.includes(t) && !x05.includes(t)
+    )
 
     return { x0, x05, x1, x2 }
   }
 
   const getDefenseEffectiveness = (type: string): MultiplierMap => {
-    const x0: string[] = []
-    const x05: string[] = []
-    const x1: string[] = []
-    const x2: string[] = []
+    const data = typeEffectiveness[type]
 
-    typesKeys.forEach((attacker) => {
-      const attackerData = typeEffectiveness[attacker]
-      if (attackerData.strong.includes(type)) {
-        x2.push(attacker)
-      } else if (attackerData.weak.includes(type)) {
-        x05.push(attacker)
-      } else if (attackerData.immune.includes(type)) {
-        x0.push(attacker)
-      } else {
-        x1.push(attacker)
-      }
-    })
+    const x0 = [...data.defensaX0]
+    const x2 = [...data.defensaX2]
+    const x05 = [...data.defensaX0_5]
+
+    const x1 = typesKeys.filter(
+      (t) => !x0.includes(t) && !x2.includes(t) && !x05.includes(t)
+    )
 
     return { x0, x05, x1, x2 }
   }
@@ -376,38 +279,44 @@ export default function PokeType() {
               </span>
               <span className="typeKey">Dual</span>
             </div>
-            <div className="typeCardBody">
-              <div className="typeItem">
-                <strong>Defensa x0</strong>
-                <span>{defenseResult.x0.length ? defenseResult.x0.join(', ') : 'Ninguna'}</span>
+            <div className="typeCardBody twoCols">
+              <div className="typeSection">
+                <div className="typeSectionTitle">Ataque</div>
+                <div className="typeItem">
+                  <strong>Eficaz</strong>
+                  <span><span className="multiplierBadge multiplier-x2">x2</span>{offenseResult.x2.length ? offenseResult.x2.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Neutro</strong>
+                  <span><span className="multiplierBadge multiplier-x1">x1</span>{offenseResult.x1.length ? offenseResult.x1.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Poco eficaz</strong>
+                  <span><span className="multiplierBadge multiplier-x05">x0.5</span>{offenseResult.x05.length ? offenseResult.x05.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Inmune</strong>
+                  <span><span className="multiplierBadge multiplier-x0">x0</span>{offenseResult.x0.length ? offenseResult.x0.join(', ') : 'Ninguna'}</span>
+                </div>
               </div>
-              <div className="typeItem">
-                <strong>Defensa x0.5</strong>
-                <span>{defenseResult.x05.length ? defenseResult.x05.join(', ') : 'Ninguna'}</span>
-              </div>
-              <div className="typeItem">
-                <strong>Defensa x1</strong>
-                <span>{defenseResult.x1.length ? defenseResult.x1.join(', ') : 'Ninguna'}</span>
-              </div>
-              <div className="typeItem">
-                <strong>Defensa x2</strong>
-                <span>{defenseResult.x2.length ? defenseResult.x2.join(', ') : 'Ninguna'}</span>
-              </div>
-              <div className="typeItem">
-                <strong>Ataque x0</strong>
-                <span>{offenseResult.x0.length ? offenseResult.x0.join(', ') : 'Ninguna'}</span>
-              </div>
-              <div className="typeItem">
-                <strong>Ataque x0.5</strong>
-                <span>{offenseResult.x05.length ? offenseResult.x05.join(', ') : 'Ninguna'}</span>
-              </div>
-              <div className="typeItem">
-                <strong>Ataque x1</strong>
-                <span>{offenseResult.x1.length ? offenseResult.x1.join(', ') : 'Ninguna'}</span>
-              </div>
-              <div className="typeItem">
-                <strong>Ataque x2</strong>
-                <span>{offenseResult.x2.length ? offenseResult.x2.join(', ') : 'Ninguna'}</span>
+              <div className="typeSection">
+                <div className="typeSectionTitle">Defensa</div>
+                <div className="typeItem">
+                  <strong>Eficaz</strong>
+                  <span><span className="multiplierBadge multiplier-x2">x2</span>{offenseResult.x2.length ? offenseResult.x2.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Neutro</strong>
+                  <span><span className="multiplierBadge multiplier-x1">x1</span>{offenseResult.x1.length ? offenseResult.x1.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Poco eficaz</strong>
+                  <span><span className="multiplierBadge multiplier-x05">x0.5</span>{offenseResult.x05.length ? offenseResult.x05.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Inmune</strong>
+                  <span><span className="multiplierBadge multiplier-x0">x0</span>{offenseResult.x0.length ? offenseResult.x0.join(', ') : 'Ninguna'}</span>
+                </div>
               </div>
             </div>
           </article>
@@ -418,7 +327,7 @@ export default function PokeType() {
             const matched = typeEffectiveness[typeKey]
             const baseColor = typeColors[typeKey] ?? '#A8A77A'
             return (
-              <article className="typeCard" style={{ borderColor: `${baseColor}88` }}>
+              <article className="typeCard singleTypeCard" style={{ borderColor: `${baseColor}AF` }}>
                 <div
                   className="typeCardHeader"
                   style={{
@@ -429,65 +338,48 @@ export default function PokeType() {
                   <span className="typeName">{typeName}</span>
                   <span className="typeKey">{typeKey}</span>
                 </div>
-                <div className="typeCardBody">
-                  <div className="typeItem">
-                    <strong>Fuerte contra</strong>
-                    <span>{formatTypeList(matched.strong)}</span>
+                <div className="typeCardBody twoCols">
+                  <div className="typeSection">
+                    <div className="typeSectionTitle">Ataque</div>
+                    <div className="typeItem">
+                      <strong>Eficaz:</strong>
+                      <span><span className="multiplierBadge multiplier-x2">x2</span>{formatTypeList(matched.ataqueX2)}</span>
+                    </div>
+                    <div className="typeItem">
+                      <strong>Poco eficaz:</strong>
+                      <span><span className="multiplierBadge multiplier-x05">x0.5</span>{formatTypeList(matched.ataqueX0_5)}</span>
+                    </div>
+                    <div className="typeItem">
+                      <strong>Inmune:</strong>
+                      <span><span className="multiplierBadge multiplier-x0">x0</span>{formatTypeList(matched.ataqueX0)}</span>
+                    </div>
                   </div>
-                  <div className="typeItem">
-                    <strong>Débil contra</strong>
-                    <span>{formatTypeList(matched.weak)}</span>
-                  </div>
-                  <div className="typeItem">
-                    <strong>Resiste a</strong>
-                    <span>{formatTypeList(matched.resistant)}</span>
-                  </div>
-                  <div className="typeItem">
-                    <strong>Inmune a</strong>
-                    <span>{formatTypeList(matched.immune)}</span>
+                  <div className="typeSection">
+                    <div className="typeSectionTitle">Defensa</div>
+                    <div className="typeItem">
+                      <strong>Débil:</strong>
+                      <span><span className="multiplierBadge multiplier-x2">x2</span>{formatTypeList(matched.defensaX2)}</span>
+                    </div>
+                    <div className="typeItem">
+                      <strong>Resiste:</strong>
+                      <span><span className="multiplierBadge multiplier-x05">x0.5</span>{formatTypeList(matched.defensaX0_5)}</span>
+                    </div>
+                    <div className="typeItem">
+                      <strong>Inmune:</strong>
+                      <span><span className="multiplierBadge multiplier-x0">x0</span>{formatTypeList(matched.defensaX0)}</span>
+                    </div>
                   </div>
                 </div>
               </article>
             )
           })()
-        ) : (
-          filteredTypes.map(([typeKey, typeName]) => {
-            const matched = typeEffectiveness[typeKey]
-            const baseColor = typeColors[typeKey] ?? '#A8A77A'
-            return (
-              <article key={typeKey} className="typeCard" style={{ borderColor: `${baseColor}88` }}>
-                <div
-                  className="typeCardHeader"
-                  style={{
-                    background: `linear-gradient(135deg, ${baseColor}bb 0%, ${baseColor}55 100%)`,
-                    borderBottom: `2px solid ${baseColor}`,
-                  }}
-                >
-                  <span className="typeName">{typeName}</span>
-                  <span className="typeKey">{typeKey}</span>
-                </div>
-                <div className="typeCardBody">
-                  <div className="typeItem">
-                    <strong>Fuerte contra</strong>
-                    <span>{formatTypeList(matched.strong)}</span>
-                  </div>
-                  <div className="typeItem">
-                    <strong>Débil contra</strong>
-                    <span>{formatTypeList(matched.weak)}</span>
-                  </div>
-                  <div className="typeItem">
-                    <strong>Resiste a</strong>
-                    <span>{formatTypeList(matched.resistant)}</span>
-                  </div>
-                  <div className="typeItem">
-                    <strong>Inmune a</strong>
-                    <span>{formatTypeList(matched.immune)}</span>
-                  </div>
-                </div>
-              </article>
-            )
-          })
-        )}
+        ) : selectedComboTypes.length === 0 ? (
+          <div className="typeCard noSelection">
+            <div className="typeCardBody">
+              <p>Selecciona al menos un tipo de Pokémon para ver su tabla de ataque/defensa.</p>
+            </div>
+          </div>
+        ) : null}
       </section>
     </main>
   )
