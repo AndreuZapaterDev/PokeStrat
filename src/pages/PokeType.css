@@ -1,0 +1,243 @@
+.typeInfo {
+  margin-bottom: 1.1rem;
+  color: var(--muted);
+  max-width: 860px;
+  background: rgba(10, 15, 29, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.filterZone {
+  display: grid;
+  gap: 0.8rem;
+  background: rgba(9, 13, 30, 0.6);
+  border: 1px solid rgba(147, 176, 255, 0.24);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1.15rem;
+  box-shadow: 0 10px 20px rgba(1, 2, 8, 0.4);
+}
+
+.filterHeader h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #eff6ff;
+}
+
+.filterHeader p {
+  margin: 0.25rem 0 0;
+  color: #b9cee7;
+  font-size: 0.89rem;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clearFilterBtn {
+  white-space: nowrap;
+  font-size: 0.84rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #c9e0ff;
+  padding: 0.45rem 0.8rem;
+}
+
+.clearFilterBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.comboPanel {
+  display: none;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 12px rgba(66, 161, 255, 0.5);
+}
+
+.typeInfo p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #d6e5ff;
+}
+
+.typeSearch {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.typeSearch input {
+  width: clamp(170px, 100%, 350px);
+  border-radius: 999px;
+  border: 1px solid rgba(199, 215, 255, 0.45);
+  background: rgba(8, 15, 31, 0.8);
+  color: #f7fbff;
+  padding: 0.5rem 0.9rem;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.typeSearch input:focus {
+  border-color: rgba(72, 143, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(72, 143, 255, 0.25);
+}
+
+.typeSearchHint {
+  color: #9fb6d1;
+  font-size: 0.78rem;
+}
+
+.comboPanel {
+  margin-top: 1.1rem;
+  background: rgba(11, 18, 42, 0.8);
+  border: 1px solid rgba(96, 132, 226, 0.25);
+  border-radius: var(--radius);
+  padding: 0.95rem 1rem;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32);
+}
+
+.comboPanel h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1.1rem;
+  color: #dff1ff;
+  letter-spacing: 0.02em;
+}
+
+.comboChipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+}
+
+.comboChip {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: #c8d9f6;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.comboChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(65, 146, 248, 0.24);
+}
+
+.comboChip.active {
+  box-shadow: 0 0 12px rgba(42, 189, 255, 0.45);
+}
+
+.comboSummary {
+  display: grid;
+  gap: 0.35rem;
+  color: #e6efff;
+  font-size: 0.84rem;
+  line-height: 1.2;
+}
+
+.comboSummary strong {
+  color: #97c4ff;
+}
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.typeCard {
+  background: linear-gradient(145deg, rgba(12, 17, 40, 0.92), rgba(20, 28, 59, 0.94));
+  border: 1px solid rgba(164, 207, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 14px 30px rgba(3, 8, 23, 0.45);
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.typeCard:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(3, 8, 23, 0.55);
+}
+.combinedCard {
+  grid-column: 1 / -1;
+  border-radius: 20px;
+  box-shadow: 0 18px 32px rgba(3, 8, 23, 0.62);
+}
+
+.combinedCard .typeItem {
+  background: rgba(255, 255, 255, 0.08);
+}
+.typeCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.85rem 0.95rem;
+  color: #fff;
+}
+
+.typeName {
+  font-size: 1.02rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.typeKey {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  color: #f1f7ff;
+}
+
+.typeCardBody {
+  background: rgba(12, 18, 44, 0.45);
+  padding: 0.7rem 0.8rem 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.typeItem {
+  display: grid;
+  gap: 0.2rem;
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.typeItem strong {
+  color: #aac4ed;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.typeItem span {
+  color: #eeeff7;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.typeItem span:empty {
+  color: #6f809f;
+}

@@ -155,7 +155,7 @@ export default function AuthPage() {
               {mode === 'login' ? 'Entrar' : 'Crear cuenta'}
             </button>
 
-            {loading && <LoadingSpinner label="Procesando…" />}
+            {loading && <LoadingSpinner label="Procesando" />}
             {message && <p className="status success">{message}</p>}
             {error && <p className="status error">{error}</p>}
           </form>

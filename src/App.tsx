@@ -3,6 +3,7 @@ import './App.css'
 import Home from './pages/Home'
 import Pokedex from './pages/Pokedex'
 import PokemonDetail from './pages/PokemonDetail'
+import PokeType from './pages/PokeType'
 import Auth from './pages/Auth'
 
 import { useEffect, useRef, useState } from 'react'
@@ -59,6 +60,9 @@ export default function App() {
             <NavLink to="/pokedex" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
               Pokédex
             </NavLink>
+            <NavLink to="/tipos" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
+              Tipos
+            </NavLink>
             {user ? (
               <span className="navLink" aria-live="polite">
                 Hola, {user.user_metadata?.username ?? user.email ?? 'usuario'}
@@ -75,6 +79,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/pokedex" element={<Pokedex />} />
           <Route path="/pokemon/:id" element={<PokemonDetail />} />
+          <Route path="/tipos" element={<PokeType />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<Home />} />
         </Routes>

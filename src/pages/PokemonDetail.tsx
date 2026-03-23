@@ -161,7 +161,7 @@ export default function PokemonDetailPage() {
         </Link>
       </header>
 
-      {loading && <LoadingSpinner label="Cargando datos…" />}
+      {loading && <LoadingSpinner label="Cargando datos" />}
       {error && <p className="status error">{error}</p>}
 
       {!loading && !error && pokemon && (

@@ -1,0 +1,106 @@
+﻿# PokeAPI: endpoints principales y datos que se pueden obtener
+
+Base API: https://pokeapi.co/api/v2/
+
+## 1) Pokémon y datos relacionados
+- GET /pokemon/{id|name}
+  - id, name, base_experience, height, weight
+  - sprites (front, official-artwork, dream world, animated)
+  - types
+  - abilities (is_hidden, slot)
+  - stats (hp, attack, defense, speed, etc.)
+  - moves (version_group_details: method, level_learned_at, version_group)
+  - held_items
+  - species (url para pokemon-species)
+  - game_indices
+  - forms
+  - location_area_encounters
+
+- GET /pokemon?limit=&offset= (lista con count/next/previous/results)
+
+- GET /pokemon-species/{id|name}
+  - names (múltiples idiomas)
+  - flavor_text_entries
+  - genera
+  - habitat
+  - egg_groups
+  - capture_rate, base_happiness, is_legendary, is_mythical
+  - evolution_chain.url
+  - varieties
+
+- GET /evolution-chain/{id}
+  - chain completo + detalles de triggers y condiciones
+
+- GET /pokemon-form/{id|name}
+  - form_name, form_order, form_names, sprites
+
+## 2) Movimientos / ataques
+- GET /move/{id|name}
+  - accuracy, power, pp, priority
+  - contest_type, contest_effect, damage_class, generation, target, type
+  - effect_entries, flavor_text_entries (idiomas)
+
+- GET /move-learn-method/{id|name}
+- GET /move-target/{id|name}
+- GET /move-category/{id|name}
+
+## 3) Habilidades
+- GET /ability/{id|name}
+  - effect_entries, flavor_text_entries
+  - pokemon (lista con pokémon que tienen esta habilidad)
+
+- GET /ability?limit=&offset=
+
+## 4) Tipos
+- GET /type/{id|name}
+  - damage_relations (double_damage_to/from, half_damage_to/from, no_damage_to/from)
+  - pokemon
+  - moves
+
+## 5) Items y bayas
+- GET /item/{id|name}
+  - cost, fling_power, fling_effect, attributes, category, effect_entries, flavor_text_entries, sprites
+
+- GET /item-category/{id|name}
+- GET /item-pocket/{id|name}
+
+- GET /berry/{id|name}
+  - growth_time, max_harvest, natural_gift_type, size, firmness, flavors
+
+- GET /berry-firmness/{id|name}
+- GET /berry-flavor/{id|name}
+
+## 6) Lugares y regiones
+- GET /location/{id|name}
+- GET /location-area/{id|name}
+- GET /region/{id|name}
+- GET /generation/{id|name} (pokédexes, version_groups, movimientos, etc.)
+- GET /pokedex/{id|name} (especies de pokémon por pokédex)
+- GET /version/{id|name}
+- GET /version-group/{id|name}
+
+## 7) Otras estructuras útiles
+- GET /language/{id|name}
+- GET /gender/{id|name}
+- GET /egg-group/{id|name}
+- GET /pokemon-habitat/{id|name}
+- GET /pokemon-color/{id|name}
+- GET /pokemon-shape/{id|name}
+- GET /pokeathlon-stat/{id|name}
+- GET /pal-park-area/{id|name}
+- GET /encounter-method/{id|name}
+- GET /encounter-condition/{id|name}
+- GET /encounter-condition-value/{id|name}
+- GET /item-attribute/{id|name}
+
+## 8) Nuestra APP / tu código (y qué está cubierto ahora)
+- fetchPokemonList(limit, offset)
+- fetchPokemonSummary(idOrName)
+- fetchPokemonDetail(idOrName)
+  - usa pokemon + pokemon-species + evolution-chain + location_area_encounters
+  - localiza texto/español con getLocalizedValue/getFlavorText
+
+## 9) Cómo obtener “toda” la info
+- Usa el endpoint raíz /api/v2/ para encontrar recursos
+- Ahora repite requests por cada recurso con ?limit=100000&offset=0
+- Consulta detalles individuales para obtener campos completos (names/flavor_text_entries, relaciones, sprites, efectos, etc.)

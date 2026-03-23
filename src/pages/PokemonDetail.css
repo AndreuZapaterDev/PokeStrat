@@ -374,7 +374,7 @@
   border-radius: 0.8rem;
   background: rgba(25, 40, 68, 0.72);
   border: 1px solid rgba(140, 180, 250, 0.3);
-  width: min(260px, 100%);
+  width: min(300px, 100%);
 }
 
 .evolutionBranch {
@@ -398,17 +398,6 @@
   border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   background: rgba(0, 0, 0, 0.15);
-}}
-
-.evolutionArrowDown {
-  font-size: 1.35rem;
-  color: rgba(227, 240, 255, 0.85);
-  line-height: 1;
-}
-  padding: 0.45rem 0.6rem;
-  border-radius: 0.6rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .evolutionImageLink {
@@ -445,57 +434,12 @@
   color: rgba(227, 236, 252, 0.85);
 }
 
-.evolutionItemIcon {
-  margin-top: 0.3rem;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(0, 0, 0, 0.18);
-}
-
-  color: rgba(227, 236, 252, 0.82);
-}
-
-.evolutionColumn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-}
-
-.evolutionCardColumn {
-  width: min(300px, 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.8rem;
-  border-radius: 1rem;
-  background: rgba(12, 23, 40, 0.7);
-  border: 1px solid rgba(111, 152, 234, 0.35);
-  box-shadow: 0 16px 25px rgba(0, 0, 0, 0.25);
-}
-
-.evolutionCardColumn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.33);
-}
-
-.evolutionArrowDown {
-  font-size: 1.2rem;
-  color: rgba(183, 203, 239, 0.9);
-}
-
 .evolutionColumnArrows {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
   margin-top: -0.9rem;
-}
-
-  color: rgba(212, 225, 255, 0.88);
 }
 
 .evolutionArrow {

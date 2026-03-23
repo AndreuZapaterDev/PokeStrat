@@ -313,6 +313,45 @@ export async function fetchPokemonSummary(
   return summary
 }
 
+export async function fetchPokemonsByTypes(typeNames: string[]): Promise<PokemonListItem[]> {
+  if (!Array.isArray(typeNames) || typeNames.length === 0) {
+    return []
+  }
+
+  const results = await Promise.all(
+    typeNames.map(async (type) => {
+      const res = await fetch(`${POKEAPI_BASE}/type/${type}`)
+      if (!res.ok) {
+        throw new Error(`Error en la API de PokéAPI (type ${type}: ${res.status})`)
+      }
+      const data = await res.json()
+      const pokemon = Array.isArray(data.pokemon)
+        ? data.pokemon
+            .map((p: any) => p?.pokemon)
+            .filter((p: any) => p && typeof p.name === 'string' && typeof p.url === 'string')
+        : []
+      return pokemon as PokemonListItem[]
+    }),
+  )
+
+  if (results.length === 0) return []
+
+  const intersection = results.reduce((acc, list) => {
+    if (acc.length === 0) return list
+    const set = new Set(list.map((item) => item.name))
+    return acc.filter((item) => set.has(item.name))
+  }, results[0])
+
+  const uniqueMap = new Map<string, PokemonListItem>()
+  intersection.forEach((item) => {
+    if (!uniqueMap.has(item.name)) {
+      uniqueMap.set(item.name, item)
+    }
+  })
+
+  return Array.from(uniqueMap.values())
+}
+
 export async function fetchPokemonDetail(idOrName: string | number): Promise<PokemonDetail> {
   const response = await fetch(`${POKEAPI_BASE}/pokemon/${idOrName}`)
   if (!response.ok) {
