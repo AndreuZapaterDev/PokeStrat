@@ -193,6 +193,58 @@ export default function PokeType() {
     return multiplier
   }
 
+  type MultiplierMap = {
+    x0: string[]
+    x05: string[]
+    x1: string[]
+    x2: string[]
+  }
+
+  const typesKeys = Object.keys(typeEffectiveness)
+
+  const getAttackEffectiveness = (type: string): MultiplierMap => {
+    const data = typeEffectiveness[type]
+    const x0 = [...data.immune]
+    const x2 = [...data.strong]
+    const x05 = [...data.weak]
+    const x1 = typesKeys.filter((t) => !x0.includes(t) && !x2.includes(t) && !x05.includes(t))
+
+    return { x0, x05, x1, x2 }
+  }
+
+  const getDefenseEffectiveness = (type: string): MultiplierMap => {
+    const x0: string[] = []
+    const x05: string[] = []
+    const x1: string[] = []
+    const x2: string[] = []
+
+    typesKeys.forEach((attacker) => {
+      const attackerData = typeEffectiveness[attacker]
+      if (attackerData.strong.includes(type)) {
+        x2.push(attacker)
+      } else if (attackerData.weak.includes(type)) {
+        x05.push(attacker)
+      } else if (attackerData.immune.includes(type)) {
+        x0.push(attacker)
+      } else {
+        x1.push(attacker)
+      }
+    })
+
+    return { x0, x05, x1, x2 }
+  }
+
+  const effectivenessSummary = useMemo(() => {
+    const summary: Record<string, { attacking: MultiplierMap; defending: MultiplierMap }> = {}
+    typesKeys.forEach((type) => {
+      summary[type] = {
+        attacking: getAttackEffectiveness(type),
+        defending: getDefenseEffectiveness(type),
+      }
+    })
+    return summary
+  }, [])
+
   type MultiplierBuckets = {
     x0: string[]
     x025: string[]
@@ -258,32 +310,6 @@ export default function PokeType() {
     return buckets
   }, [selectedComboTypes])
 
-  const comboResult = useMemo(() => {
-    const weak: string[] = []
-    const resist: string[] = []
-    const immune: string[] = []
-    const neutral: string[] = []
-
-    if (selectedComboTypes.length !== 2) {
-      return { weak, resist, immune, neutral }
-    }
-
-    Object.entries(typeLabels).forEach(([defType, defName]) => {
-      const multiplier = getMultiplier(defType, selectedComboTypes)
-      if (multiplier === 0) {
-        immune.push(defName)
-      } else if (multiplier === 0.25 || multiplier === 0.5) {
-        resist.push(defName)
-      } else if (multiplier === 1) {
-        neutral.push(defName)
-      } else if (multiplier === 2 || multiplier >= 4) {
-        weak.push(defName)
-      }
-    })
-
-    return { weak, resist, immune, neutral }
-  }, [selectedComboTypes])
-
   const dualHeaderStyle = selectedComboTypes.length === 2
     ? {
         background: `linear-gradient(to right, ${typeColors[selectedComboTypes[0]] ?? '#A8A77A'}CC 0%, ${typeColors[selectedComboTypes[1]] ?? '#A8A77A'}CC 100%)`,
@@ -339,6 +365,8 @@ export default function PokeType() {
 
       </section>
 
+      <div style={{ display: 'none' }}>{JSON.stringify(effectivenessSummary)}</div>
+
       <section className="typeGrid">
         {selectedComboTypes.length === 2 ? (
           <article className="typeCard combinedCard" style={{ borderColor: 'rgba(255,255,255,0.35)' }}>
@@ -350,20 +378,36 @@ export default function PokeType() {
             </div>
             <div className="typeCardBody">
               <div className="typeItem">
-                <strong>Debilidades</strong>
-                <span>{comboResult.weak.length ? comboResult.weak.join(', ') : 'Ninguna'}</span>
+                <strong>Defensa x0</strong>
+                <span>{defenseResult.x0.length ? defenseResult.x0.join(', ') : 'Ninguna'}</span>
               </div>
               <div className="typeItem">
-                <strong>Resistencias</strong>
-                <span>{comboResult.resist.length ? comboResult.resist.join(', ') : 'Ninguna'}</span>
+                <strong>Defensa x0.5</strong>
+                <span>{defenseResult.x05.length ? defenseResult.x05.join(', ') : 'Ninguna'}</span>
               </div>
               <div className="typeItem">
-                <strong>Inmunidades</strong>
-                <span>{comboResult.immune.length ? comboResult.immune.join(', ') : 'Ninguna'}</span>
+                <strong>Defensa x1</strong>
+                <span>{defenseResult.x1.length ? defenseResult.x1.join(', ') : 'Ninguna'}</span>
               </div>
               <div className="typeItem">
-                <strong>Neutral</strong>
-                <span>{comboResult.neutral.length ? comboResult.neutral.join(', ') : 'Ninguna'}</span>
+                <strong>Defensa x2</strong>
+                <span>{defenseResult.x2.length ? defenseResult.x2.join(', ') : 'Ninguna'}</span>
+              </div>
+              <div className="typeItem">
+                <strong>Ataque x0</strong>
+                <span>{offenseResult.x0.length ? offenseResult.x0.join(', ') : 'Ninguna'}</span>
+              </div>
+              <div className="typeItem">
+                <strong>Ataque x0.5</strong>
+                <span>{offenseResult.x05.length ? offenseResult.x05.join(', ') : 'Ninguna'}</span>
+              </div>
+              <div className="typeItem">
+                <strong>Ataque x1</strong>
+                <span>{offenseResult.x1.length ? offenseResult.x1.join(', ') : 'Ninguna'}</span>
+              </div>
+              <div className="typeItem">
+                <strong>Ataque x2</strong>
+                <span>{offenseResult.x2.length ? offenseResult.x2.join(', ') : 'Ninguna'}</span>
               </div>
             </div>
           </article>
