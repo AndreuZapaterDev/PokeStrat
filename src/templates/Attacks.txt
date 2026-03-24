@@ -1,0 +1,109 @@
+﻿POKEAPI - DATOS DE ATAQUES (MOVES) DE POKÉMON
+
+1. ENDPOINT PRINCIPAL
+- /move
+- Response:
+  - count: número total de movimientos
+  - next: URL siguiente página (o null)
+  - previous: URL anterior (o null)
+  - results: lista de objetos {name, url}
+
+2. ENDPOINT DETALLE
+- /move/{id o name}
+- Campos clave:
+  - id: número
+  - name: nombre técnico (en inglés, con guiones)
+  - accuracy: precisión (0 o null: no aplica)
+  - pp: puntos de poder
+  - power: potencia (0 o null: no aplica)
+  - priority: prioridad de ejecución
+  - type: {name,url}
+  - damage_class: {name,url} (physical, special, status)
+  - effect_chance: % de efecto secundario
+  - effect_entries: array con descripciones.
+  - generation: {name,url}
+
+3. LOCALIZACIÓN
+- names: array de {language:{name,url}, name}
+- flavor_text_entries: array de {flavor_text, language, version_group}
+  - obtener english/español via language.name
+
+4. DETALLE DE EFECTO Y CONDICIONES
+- effect_entries: contiene el texto de efecto en inglés (o localizable)
+- effect_changes: diferencias del efecto por versiones
+- meta:
+  - ailment: {name,url}
+  - category: {name,url} (damage, heal, etc.)
+  - min_hits,max_hits,min_turns,max_turns
+  - drain,healing,crit_rate,ailment_chance,flinch_chance,stat_chance
+  - stat_change: objeto {change,stat:{name,url}}
+
+5. APRENDIZAJE Y MÁQUINAS
+- learnable_by_pokemon: array de {name,url} de Pokémon que pueden aprenderlo
+- machines: array de {machine:{url}, version_group:{name,url}}
+
+6. RELACIÓN CON OTROS ENDPOINTS
+- /type/{id}: detalle tipo y lista de moves
+- /damage-class/{id}: lista de moves por categoría
+- /pokemon/{id}: lista de moves con versión y método de aprendizaje
+
+7. EJEMPLO PARA /move/{name} (thunderbolt)
+- id: 85
+- name: thunderbolt
+- accuracy: 100
+- pp: 15
+- power: 90
+- priority: 0
+- type:  electric
+- damage_class: special
+- effect_chance: 10
+- effect_entries:
+  - [en] Has a 10% chance to paralyze the target.
+- flavor_text_entries:
+  - [en] A strong electric blast crashes down on the target. This may also leave the target with paralysis.
+- names:
+  - [es] Rayo
+  - [en] Thunderbolt
+- generation: generation-i
+- meta: {ailment:name:'paralysis', crit_rate:1, ailment_chance:10, flinch_chance:0, etc.}
+
+8. QUERY DE FILTROS RECOMENDADOS
+- Por tipo -> /type/{name} => moves
+- Por categoría de daño -> /damage-class/{name} => moves
+- Por generación -> /generation/{name} => moves (requiere filtrado local por move.version_group)
+- Por entradas de efecto -> filtrar por text match en effect_entries o flavor_text_entries
+
+9. MAPA A UI (movimientos)
+- 	ype y damage_class -> etiqueta visual
+- power/ccuracy/pp -> stats
+- effect_entries -> descripción estratégica
+- lavor_text_entries -> texto lore
+- learnable_by_pokemon -> listado de Pokémon
+- meta -> odds de estado
+
+10. BEST PRACTICES EN FETCH
+- fetchMoveList(page, limit) -> base.
+- fetchMoveDetail(name) -> show card completo.
+- caché local para no re-fetch si se repite selección.
+- en apps de búsqueda, convertir 
+ame en friendly label con 
+ames localizados.
+
+11. EJEMPLO JSON REAL (thunderbolt)
+{
+  id: 85,
+  name: thunderbolt,
+  accuracy: 100,
+  effect_chance: 10,
+  pp: 15,
+  priority: 0,
+  power: 90,
+  type: {name:electric,url:https://pokeapi.co/api/v2/type/13/},
+  damage_class: {name:special,url:https://pokeapi.co/api/v2/move-damage-class/3/},
+  generation: {name:generation-i,url:https://pokeapi.co/api/v2/generation/1/},
+  effect_entries:[{effect:Has a 10% chance to paralyze the target.,short_effect:May paralyze opponent.,language:{name:en}}],
+  flavor_text_entries:[{flavor_text:A strong electric blast crashes down on the target. This may also leave the target with paralysis.,language:{name:en},version_group:{name:red-blue}}],
+  names:[{language:{name:en},name:Thunderbolt},{language:{name:es},name:Rayo}],
+  learnable_by_pokemon:[{name:pikachu,url:...},{name:zapdos,url:...}],
+  machines:[{machine:{url:...},version_group:{name:yellow,url:...}}]
+}

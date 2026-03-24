@@ -302,20 +302,28 @@ export default function PokeType() {
               <div className="typeSection">
                 <div className="typeSectionTitle">Defensa</div>
                 <div className="typeItem">
-                  <strong>Eficaz</strong>
-                  <span><span className="multiplierBadge multiplier-x2">x2</span>{offenseResult.x2.length ? offenseResult.x2.join(', ') : 'Ninguna'}</span>
+                  <strong>Débil</strong>
+                  <span><span className="multiplierBadge multiplier-x2">x2</span>{defenseResult.x2.length ? defenseResult.x2.join(', ') : 'Ninguna'}</span>
                 </div>
                 <div className="typeItem">
                   <strong>Neutro</strong>
-                  <span><span className="multiplierBadge multiplier-x1">x1</span>{offenseResult.x1.length ? offenseResult.x1.join(', ') : 'Ninguna'}</span>
+                  <span><span className="multiplierBadge multiplier-x1">x1</span>{defenseResult.x1.length ? defenseResult.x1.join(', ') : 'Ninguna'}</span>
                 </div>
                 <div className="typeItem">
-                  <strong>Poco eficaz</strong>
-                  <span><span className="multiplierBadge multiplier-x05">x0.5</span>{offenseResult.x05.length ? offenseResult.x05.join(', ') : 'Ninguna'}</span>
+                  <strong>Resiste</strong>
+                  <span><span className="multiplierBadge multiplier-x05">x0.5</span>{defenseResult.x05.length ? defenseResult.x05.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Muy resistente</strong>
+                  <span><span className="multiplierBadge multiplier-x025">x0.25</span>{defenseResult.x025.length ? defenseResult.x025.join(', ') : 'Ninguna'}</span>
                 </div>
                 <div className="typeItem">
                   <strong>Inmune</strong>
-                  <span><span className="multiplierBadge multiplier-x0">x0</span>{offenseResult.x0.length ? offenseResult.x0.join(', ') : 'Ninguna'}</span>
+                  <span><span className="multiplierBadge multiplier-x0">x0</span>{defenseResult.x0.length ? defenseResult.x0.join(', ') : 'Ninguna'}</span>
+                </div>
+                <div className="typeItem">
+                  <strong>Muy débil</strong>
+                  <span><span className="multiplierBadge multiplier-x4">x4</span>{defenseResult.x4.length ? defenseResult.x4.join(', ') : 'Ninguna'}</span>
                 </div>
               </div>
             </div>

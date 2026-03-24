@@ -1,0 +1,109 @@
+﻿POKEAPI - DATOS DE OBJETOS (ITEMS) DE POKÉMON
+
+1. ENDPOINT PRINCIPAL
+- /item
+- Response:
+  - count: número total de objetos
+  - next: URL siguiente página (o null)
+  - previous: URL anterior (o null)
+  - results: lista de objetos {name, url}
+
+2. ENDPOINTS RELACIONADOS
+- /item-category
+- /item-attribute
+- /item-pocket
+- /berry
+
+3. ENDPOINT DETALLE
+- /item/{id o name}
+- Campos clave:
+  - id: número
+  - name: nombre técnico (en inglés)
+  - cost: precio en Pokedólares
+  - fling_power: potencia de lanzamiento (Fling)
+  - fling_effect: efecto de lanzamiento (url de /fling-effect)
+  - attributes: array de {name,url}
+  - category: {name,url}
+  - effect_entries: array {effect,short_effect,language}
+  - flavor_text_entries: array {flavor_text,language,version_group}
+  - names: array {name,language}
+  - sprites: {default:url}
+  - held_by_pokemon: array de {pokemon:{name,url}, version_details:[{rarity,version_group}]}
+  - baby_trigger_for: array de movimientos (PICOP revista)
+
+4. ITEM CATEGORY
+- /item-category/{id o name}
+- Response:
+  - id, name, items [{name,url}], pocket {name,url}
+
+5. ITEM ATTRIBUTE
+- /item-attribute/{id o name}
+- Response:
+  - id, name, items [{name,url}] (all items con la attribute)
+
+6. ITEM POCKET
+- /item-pocket/{id o name}
+- Contiene groups de categories y items; útil para UI tipo store
+
+7. EJEMPLO DE MAPEOS
+- Filtrado por categoría:
+  - fetchItemCategoryList() => select categorias
+  - fetchItemsByCategory(categoryName) => lista items
+- Filtrado por atributo:
+  - fetchItemAttributeList() => select atributos
+  - fetchItemsByAttribute(attributeName) => lista items
+- Búsqueda por texto:
+  - fetchItemList() => data bruta, luego filters en frontend (name + names localizados + effect_entries)
+
+8. MAPA A UI
+- 
+ame (label en inglés) + 
+ames (es/en) -> visibilidad
+- category -> etiqueta de grupo
+- ttributes -> tags de uso
+- cost + ling_power -> valores de estrategia
+- effect_entries y lavor_text_entries -> descripción detallada
+- held_by_pokemon -> posibilidad de uso en combates
+- sprites.default -> icono UI
+
+9. EJEMPLO JSON REAL (objetos)
+{
+   id: 1,
+  name: master-ball,
+  cost: 0,
+  fling_power: null,
+  fling_effect: null,
+  attributes: [{name:unknowable,url:https://pokeapi.co/api/v2/item-attribute/1/}],
+  category: {name:standard-balls,url:https://pokeapi.co/api/v2/item-category/34/},
+  effect_entries:[{effect:The best Poké Ball with the ultimate performance. It will catch any wild Pokémon without fail.,short_effect:Catches without fail.,language:{name:en}}],
+  flavor_text_entries:[{flavor_text:The best Ball with the ultimate performance. It will catch any wild Pokémon without fail.,language:{name:en},version_group:{name:red-blue}}],
+  names:[{language:{name:en},name:Master Ball},{language:{name:es},name:Master Ball}],
+  sprites:{default:https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png},
+  held_by_pokemon:[{pokemon:{name:mewtwo,url:https://pokeapi.co/api/v2/pokemon/150/},version_details:[{rarity:0,version_group:{name:x-y,url:...}}]}],
+  baby_trigger_for:[],
+}
+
+10. PASOS DE IMPLEMENTACIÓN PARA LISTA EN FRONTEND
+- iniciar con componente en pantalla sin items
+- useEffect para cargar categorías y atributos en selects
+- onSubmit:
+  - if category se llama fetchItemsByCategory
+  - if attribute fetchItemsByAttribute
+  - if query texto fetchItemList y filter
+  - combinar resultados del endpoint y filtro local (intersección si ambos category y attribute)
+- incluye estado itemsLoading, itemsError, items y selectedItem
+- al click item -> fetchItemDetail + mostrar detalle en panel
+
+11. VALIDACIONES
+- manejar count === 0 & paginación 
+ext / previous
+- aplicar debounce en búsqueda de texto (p.ej. 250ms)
+- normalizar string (minusculas + trim)
+- cuando no hay coincidencias mostrar mensaje amigable
+
+12. URLS DE EJEMPLO
+- https://pokeapi.co/api/v2/item?limit=20&offset=0
+- https://pokeapi.co/api/v2/item/1/
+- https://pokeapi.co/api/v2/item-category/27/
+- https://pokeapi.co/api/v2/item-attribute/5/
+- https://pokeapi.co/api/v2/item-pocket/1/

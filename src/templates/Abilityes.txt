@@ -1,0 +1,101 @@
+﻿POKEAPI - DATOS DE HABILIDADES (ABILITIES) DE POKÉMON
+
+1. ENDPOINT PRINCIPAL
+- /ability
+- Response:
+  - count: número total de habilidades
+  - next: URL siguiente página (o null)
+  - previous: URL anterior (o null)
+  - results: lista de objetos {name, url}
+
+2. ENDPOINT DETALLE
+- /ability/{id o name}
+- Campos clave:
+  - id: número
+  - name: nombre técnico (en inglés, con guiones)
+  - is_main_series: true/false
+  - generation: {name, url}
+
+3. TEXTOS LÓGICOS
+- effect_entries:
+  - array de {effect, short_effect, language: {name,url}}
+  - incluye EN, ES, FR, etc.
+- flavor_text_entries:
+  - array de {flavor_text, language: {name,url}, version_group: {name,url}}
+
+4. NOMBRES LOCALIZADOS
+- names: array de {language:{name,url}, name}
+  - obtener español (language.name === 'es')
+  - obtener inglés (language.name === 'en')
+
+5. ESTRUCTURA DE META
+- effect_changes: array con evolución de efectos por versión
+- meta:
+  - ailment: {name,url}
+  - category: {name,url}
+  - min_hits,max_hits,min_turns,max_turns
+  - drain,healing,crit_rate,ailment_chance,flinch_chance,stat_chance
+- references:
+  - flags: array de {name,url} (e.g. reflectable, mirror, snatch)
+
+6. RELACIÓN CON POKÉMON
+- pokemon: array con:
+  - is_hidden: bool
+  - slot: 1/2
+  - pokemon: {name,url}
+
+7. EJEMPLO DE VALORES PARA LA RUTA /ability/{name}
+- id: 34
+- name: intimidate
+- effect_entries: 
+  - [en]  Lowers foe attack by one stage when switching in.
+  - [es] dependiendo de la localización
+- flavor_text_entries: 
+  - [en] The Pokémon intimidates opposing Pokémon on the field.
+- names: [ {language: en, name: Intimidate}, {language: es, name: Intimidación} ]
+- pokemon: [ {is_hidden:false, slot:1, pokemon:{name:'growlithe',url:'...'}}, ... ]
+
+8. ENDPOINTS RELACIONADOS
+- /pokemon/{id} => abilities list, con {ability, is_hidden, slot}
+- /version-group, /generation, etc. (para filtrar disponibilidad por generación)
+
+9. PUNTOS DE IMPLEMENTACIÓN (frontend)
+- Obtenemos cat/aggr:
+  1) fetchItemCategoryList() -> fill select categoría
+  2) fetchItemAttributeList() -> fill select atributo
+- Al pulsar Buscar:
+  1) si hay selectedCategory y selectedAttribute, llamamos a fetch by category + fetch by attribute
+  2) si no, fetchItemList TODO y filtrado local (name y nombres localizados)
+- Al seleccionar objeto al listado:
+  1) fetchItemDetail(item.name)
+  2) show panel con todos los campos: cost, meta, effect, flavor_text, held_by_pokemon, baby_trigger_for, names, sprites.
+
+10. OBSERVACIONES
+- Valida que solo incluya idiomas relevantes (es/en) para despliegue.
+- Si es baya: el endpoint es /berry, se puede expandir con fields extras (growth_time, max_harvest, natural_gift_power, size, smoothness, soil_dryness).
+- Usar id para shortcuts es robusto (p.ej. ability/34).
+
+11. MAPA DE DATOS A UI
+- 
+ame -> título;
+- 
+ames -> etiquetas de idioma
+- effect_entries + lavor_text_entries -> descripción
+- pokemon -> lista de portadores
+- meta -> detalles de balance y estrategia
+- generation -> disponibilidad
+- is_main_series -> ignorar si no se necesita en la serie principal
+
+12. EJEMPLO JSON REAL (desde API) para INTIMIDATE
+{
+  id: 34,
+  name: intimidate,
+  is_main_series: true,
+  generation: {name: generation-iii,url:https://pokeapi.co/api/v2/generation/3/},
+  effect_entries: [{effect: Lowers foe Attack by one stage on switch-in.,short_effect:Lowers Attack.,language:{name:en,url:...}}],
+  flavor_text_entries: [{flavor_text:The Pokémon intimidates opposing Pokémon on the field.,language:{name:en,url:...},version_group:{name:emerald,url:...}}],
+  names: [{language:{name:en},name:Intimidate},{language:{name:es},name:Intimidación}],
+  pokemon: [{is_hidden:false,slot:1,pokemon:{name:growlithe,url:...}}],
+  meta:{ailment:{name:none},category:{name:damage},flinch_chance:0},
+  held_by_pokemon:[{pokemon:{name:growlithe},version_details:[{version:{name:red},rarity:5}]}]
+}
