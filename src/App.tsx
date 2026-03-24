@@ -4,6 +4,11 @@ import Home from './pages/Home'
 import Pokedex from './pages/Pokedex'
 import PokemonDetail from './pages/PokemonDetail'
 import PokeType from './pages/PokeType'
+import Attacks from './pages/Attacks'
+import Abilityes from './pages/Abilityes'
+import Objects from './pages/Objects'
+import DamageCalculator from './pages/DamageCalculator'
+import TeamBuilder from './pages/TeamBuilder'
 import Auth from './pages/Auth'
 
 import { useEffect, useRef, useState } from 'react'
@@ -55,13 +60,28 @@ export default function App() {
       <div className="app">
         <div ref={auraRef} className="mouseAura" />
         <nav className="topNav">
-          <div className="brand">PokeStrat</div>
+          <div className="brand">PokeCore</div>
           <div className="navLinks">
             <NavLink to="/pokedex" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
               Pokédex
             </NavLink>
             <NavLink to="/tipos" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
               Tipos
+            </NavLink>
+            <NavLink to="/ataques" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
+              Ataques
+            </NavLink>
+            <NavLink to="/habilidades" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
+              Habilidades
+            </NavLink>
+            <NavLink to="/objetos" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
+              Objetos
+            </NavLink>
+            <NavLink to="/damage-calculator" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
+              Damage Calc
+            </NavLink>
+            <NavLink to="/team-builder" className={({ isActive }) => (isActive ? 'navLink active' : 'navLink')}>
+              Team Builder
             </NavLink>
             {user ? (
               <span className="navLink" aria-live="polite">
@@ -80,6 +100,11 @@ export default function App() {
           <Route path="/pokedex" element={<Pokedex />} />
           <Route path="/pokemon/:id" element={<PokemonDetail />} />
           <Route path="/tipos" element={<PokeType />} />
+          <Route path="/ataques" element={<Attacks />} />
+          <Route path="/habilidades" element={<Abilityes />} />
+          <Route path="/objetos" element={<Objects />} />
+          <Route path="/damage-calculator" element={<DamageCalculator />} />
+          <Route path="/team-builder" element={<TeamBuilder />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<Home />} />
         </Routes>
